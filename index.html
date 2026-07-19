@@ -982,7 +982,7 @@
     <div class="image-preview-dialog">
       <div class="image-preview-header">
         <div class="image-preview-title" id="imagePreviewTitle">
-          模型质检报告
+          模型检测截图
         </div>
 
         <div class="image-preview-actions">
@@ -1025,22 +1025,16 @@
         desc: "适合全球大多数地区用户",
         icon: "US",
         url: "https://ai.bitreef.cc",
-        statusUrl: "https://ai.bitreef.cc/api/status"
+        pingUrl: "https://ai.bitreef.cc/api/status"
       },
       {
         name: "国内线路",
         desc: "适合中国大陆及周边地区用户",
         icon: "CN",
         url: "https://ai.kbai.net",
-        statusUrl: "https://ai.kbai.net/api/status"
+        pingUrl: "https://ai.kbai.net/api/status"
       }
     ];
-
-    // 单线路最大检测时间：5 秒
-    const CHECK_TIMEOUT = 5000;
-
-    // 超过此响应时间，显示“连接较慢”
-    const SLOW_LATENCY = 500;
 
     const lineGrid = document.getElementById("lineGrid");
     const refreshBtn = document.getElementById("refreshBtn");
@@ -1079,21 +1073,14 @@
 
               <div class="line-details">
                 <div class="latency">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
                     <path d="M8.5 16.11a6 6 0 0 1 7 0"></path>
                     <path d="M12 20h.01"></path>
                   </svg>
 
-                  <span>线路响应</span>
-                  <span class="latency-value" id="latency-${index}">
-                    检测中
-                  </span>
+                  <span>网络延迟</span>
+                  <span class="latency-value" id="latency-${index}">检测中</span>
                 </div>
 
                 <div class="line-status" id="status-${index}">
@@ -1134,108 +1121,83 @@
       const latencyElement = document.getElementById(`latency-${index}`);
 
       statusElement.className = `line-status ${type}`;
-
       statusElement.innerHTML = `
         <span class="line-status-dot"></span>
         <span>${label}</span>
       `;
 
-      latencyElement.className = "latency-value";
-
-      if (latency !== null && Number.isFinite(latency)) {
+      if (latency !== null) {
         latencyElement.textContent = `${latency} ms`;
-
-        if (type === "online") {
-          latencyElement.style.color = "var(--success)";
-        } else if (type === "slow") {
-          latencyElement.style.color = "var(--warning)";
-        } else {
-          latencyElement.style.color = "var(--text-light)";
-        }
-
-        return;
-      }
-
-      if (type === "offline") {
+      } else if (type === "offline") {
         latencyElement.textContent = "不可用";
-        latencyElement.style.color = "var(--danger)";
-        return;
+      } else {
+        latencyElement.textContent = "检测中";
       }
-
-      latencyElement.textContent = "检测中";
-      latencyElement.style.color = "var(--text-light)";
     }
 
-    /**
-     * 调用站点真实 status API 检测线路。
-     *
-     * 规则：
-     * - 请求成功且 HTTP 状态为 2xx：线路可用
-     * - HTTP 4xx / 5xx：线路不可用
-     * - 网络异常、CORS 拦截、超时：线路不可用
-     */
-    async function checkLine(line, index) {
-      const controller = new AbortController();
-      const startTime = performance.now();
+    function checkLine(line, index) {
+      return new Promise((resolve) => {
+        const startTime = performance.now();
+        const image = new Image();
+        let completed = false;
 
-      const timeout = setTimeout(() => {
-        controller.abort();
-      }, CHECK_TIMEOUT);
+        function finish(available, latency) {
+          if (completed) return;
+          completed = true;
 
-      try {
-        // 避免浏览器命中缓存，保证每次都是一次真实请求。
-        const separator = line.statusUrl.includes("?") ? "&" : "?";
-        const requestUrl = `${line.statusUrl}${separator}_t=${Date.now()}`;
+          clearTimeout(timeout);
 
-        const response = await fetch(requestUrl, {
-          method: "GET",
-          mode: "cors",
-          cache: "no-store",
-          credentials: "omit",
-          signal: controller.signal
-        });
+          if (!available) {
+            setLineStatus(index, "offline", "暂不可用");
 
-        const latency = Math.round(performance.now() - startTime);
+            resolve({
+              index,
+              available: false,
+              latency: Infinity
+            });
 
-        // 仅 2xx 响应判定为线路正常。
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+            return;
+          }
+
+          const isFast = latency <= 500;
+
+          setLineStatus(
+            index,
+            isFast ? "online" : "slow",
+            isFast ? "连接正常" : "连接较慢",
+            latency
+          );
+
+          resolve({
+            index,
+            available: true,
+            latency
+          });
         }
 
-        const isFast = latency <= SLOW_LATENCY;
+        const timeout = setTimeout(() => {
+          image.onload = null;
+          image.onerror = null;
+          finish(false, Infinity);
+        }, 5000);
 
-        setLineStatus(
-          index,
-          isFast ? "online" : "slow",
-          isFast ? "连接正常" : "连接较慢",
-          latency
-        );
+        function completeCheck() {
+          const latency = Math.round(performance.now() - startTime);
+          finish(true, latency);
+        }
 
-        return {
-          index,
-          available: true,
-          latency
-        };
-      } catch (error) {
-        console.warn(`线路检测失败：${line.name}`, error);
+        image.onload = completeCheck;
+        image.onerror = completeCheck;
 
-        setLineStatus(index, "offline", "暂不可用");
-
-        return {
-          index,
-          available: false,
-          latency: Infinity
-        };
-      } finally {
-        clearTimeout(timeout);
-      }
+        const separator = line.pingUrl.includes("?") ? "&" : "?";
+        image.src = `${line.pingUrl}${separator}_t=${Date.now()}`;
+      });
     }
 
     async function checkAllLines() {
       if (isChecking) return;
 
       isChecking = true;
-
       refreshBtn.disabled = true;
       refreshBtn.classList.add("loading");
       refreshBtn.querySelector("span:last-child").textContent = "正在检测...";
@@ -1265,7 +1227,7 @@
 
         showToast("检测完成，已为您推荐最优访问线路");
       } else {
-        showToast("暂未检测到可用线路，请检查网络后重试");
+        showToast("暂未检测到可用线路，请稍后重试");
       }
 
       refreshBtn.disabled = false;
@@ -1284,14 +1246,12 @@
         showToast("线路地址已复制到剪贴板");
       } catch (error) {
         const textarea = document.createElement("textarea");
-
         textarea.value = text;
         textarea.style.position = "fixed";
         textarea.style.opacity = "0";
 
         document.body.appendChild(textarea);
         textarea.select();
-
         document.execCommand("copy");
         textarea.remove();
 
