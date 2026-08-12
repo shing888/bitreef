@@ -1,1204 +1,224 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="BitReef API 多地区智能线路导航"
-  />
-  <title>BitReef API · 智能线路导航</title>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>BitReef | 正在跳转</title>
   <style>
-    :root {
-      --primary: #4f6ef7;
-      --primary-dark: #3c56d8;
-      --primary-light: #edf1ff;
-      --bg: #f6f8fc;
-      --card: rgba(255, 255, 255, 0.9);
-      --text: #172033;
-      --text-light: #667085;
-      --text-muted: #98a2b3;
-      --border: #e8ecf4;
-      --border-hover: #b9c6ff;
-      --success: #16b978;
-      --success-bg: #ebfbf4;
-      --warning: #e99b18;
-      --warning-bg: #fff7e8;
-      --danger: #e5485d;
-      --danger-bg: #fff0f2;
-      --shadow-sm: 0 4px 14px rgba(31, 43, 80, 0.05);
-      --shadow-md: 0 12px 32px rgba(42, 57, 105, 0.09);
-      --shadow-lg: 0 22px 55px rgba(55, 70, 120, 0.12);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
 
     body {
+      display: grid;
       min-width: 320px;
       min-height: 100vh;
       margin: 0;
-      color: var(--text);
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(104, 125, 255, 0.16), transparent 27%),
-        radial-gradient(circle at 92% 24%, rgba(139, 105, 255, 0.13), transparent 25%),
-        linear-gradient(180deg, #fafbff 0%, var(--bg) 58%, #f2f5fb 100%);
+      overflow: hidden;
+      place-items: center;
+      color: #182542;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: #fbfcff;
     }
 
-    body::before {
+    .ambient,
+    .ambient::before,
+    .ambient::after,
+    .orbit,
+    .orbit::before,
+    .orbit::after {
       position: fixed;
-      inset: 0;
-      z-index: -1;
+      pointer-events: none;
+    }
+
+    .ambient { inset: 0; overflow: hidden; }
+
+    .ambient::before,
+    .ambient::after {
+      width: 58vmax;
+      height: 58vmax;
       content: "";
-      opacity: 0.42;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(76, 99, 180, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(76, 99, 180, 0.035) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: linear-gradient(to bottom, #000 0%, transparent 75%);
-    }
-
-    body.modal-open {
-      overflow: hidden;
-    }
-
-    .container {
-      width: min(1160px, calc(100% - 36px));
-      margin: 0 auto;
-    }
-
-    .hero {
-      padding: 92px 0 62px;
-      text-align: center;
-    }
-
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 13px;
-      margin-bottom: 21px;
-      color: #5368ce;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      border: 1px solid #d8dfff;
-      border-radius: 999px;
-      background: rgba(241, 244, 255, 0.9);
-    }
-
-    .hero-tag span {
-      color: var(--primary);
-      font-size: 15px;
-    }
-
-    .hero h1 {
-      max-width: 800px;
-      margin: 0 auto;
-      font-size: clamp(37px, 6vw, 62px);
-      font-weight: 800;
-      line-height: 1.16;
-      letter-spacing: -2.3px;
-    }
-
-    .gradient-text {
-      color: transparent;
-      -webkit-background-clip: text;
-      background-clip: text;
-      background-image: linear-gradient(110deg, #4567f2 15%, #6f56da 52%, #258fd3 100%);
-    }
-
-    .hero-description {
-      max-width: 650px;
-      margin: 23px auto 0;
-      color: var(--text-light);
-      font-size: 16px;
-      line-height: 1.9;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .section-kicker,
-    .verification-kicker {
-      display: block;
-      margin-bottom: 8px;
-      color: #7e8ab2;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-    }
-
-    .section-title,
-    .verification-title {
-      margin: 0;
-      color: #202b46;
-      font-size: 27px;
-      letter-spacing: -0.7px;
-    }
-
-    .refresh-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-height: 42px;
-      padding: 0 14px;
-      cursor: pointer;
-      color: #53617f;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: var(--shadow-sm);
-      transition: 0.22s ease;
-    }
-
-    .refresh-btn:hover:not(:disabled) {
-      color: var(--primary);
-      border-color: #bdc9ff;
-      background: #f7f8ff;
-    }
-
-    .refresh-btn.loading,
-    .refresh-btn:disabled {
-      cursor: wait;
-      opacity: 0.7;
-    }
-
-    .refresh-btn.loading .refresh-icon {
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .line-grid,
-    .verification-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .line-card {
-      position: relative;
-      overflow: hidden;
-      padding: 25px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--card);
-      box-shadow: var(--shadow-sm);
-      transition: 0.25s ease;
-      backdrop-filter: blur(12px);
-    }
-
-    .line-card:hover {
-      z-index: 1;
-      transform: translateY(-5px);
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .line-card.recommended {
-      border-color: #9ce3c6;
-      background:
-        linear-gradient(135deg, rgba(226, 255, 243, 0.82), rgba(255, 255, 255, 0.95) 48%),
-        #fff;
-      box-shadow: 0 14px 35px rgba(37, 172, 112, 0.1);
-    }
-
-    .recommend-badge {
-      position: absolute;
-      top: 23px;
-      right: -58px;
-      z-index: 3;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 190px;
-      height: 31px;
-      color: #087147;
-      font-size: 11px;
-      font-weight: 750;
-      white-space: nowrap;
-      border-top: 1px solid rgba(8, 113, 71, 0.1);
-      border-bottom: 1px solid rgba(8, 113, 71, 0.1);
-      background: linear-gradient(135deg, #d9fae9, #b9f0d4);
-      box-shadow: 0 5px 13px rgba(22, 185, 120, 0.16);
-      transform: rotate(42deg);
-    }
-
-    .line-card.recommended .recommend-badge {
-      display: flex;
-    }
-
-    .line-top {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-height: 52px;
-      padding-right: 105px;
-    }
-
-    .flag-icon {
-      display: grid;
-      width: 52px;
-      height: 52px;
-      flex-shrink: 0;
-      place-items: center;
-      font-size: 27px;
-      border: 1px solid #e8ebf4;
-      border-radius: 15px;
-      background: #f8f9fd;
-    }
-
-    .line-name {
-      margin: 0;
-      color: #26314d;
-      font-size: 19px;
-      font-weight: 750;
-    }
-
-    .line-description {
-      margin: 6px 0 0;
-      color: var(--text-light);
-      font-size: 13px;
-    }
-
-    .line-details {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 17px 0;
-      margin-top: 21px;
-      border-top: 1px solid #edf0f6;
-      border-bottom: 1px solid #edf0f6;
-    }
-
-    .latency {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--text-light);
-      font-size: 13px;
-    }
-
-    .latency svg {
-      width: 16px;
-      height: 16px;
-      color: #8492ba;
-    }
-
-    .latency-value {
-      color: #2d3958;
-      font-weight: 750;
-    }
-
-    .line-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 9px;
-      color: #8c6a1b;
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-      border-radius: 999px;
-      background: var(--warning-bg);
-    }
-
-    .line-status-dot {
-      width: 7px;
-      height: 7px;
       border-radius: 50%;
-      background: var(--warning);
+      filter: blur(28px);
     }
 
-    .line-status.online {
-      color: #108354;
-      background: var(--success-bg);
+    .ambient::before {
+      top: -38vmax;
+      left: -21vmax;
+      opacity: .8;
+      background: radial-gradient(circle, rgba(85, 142, 255, .18), rgba(85, 142, 255, 0) 67%);
+      animation: drift-one 14s ease-in-out infinite alternate;
     }
 
-    .line-status.online .line-status-dot {
-      background: var(--success);
+    .ambient::after {
+      right: -25vmax;
+      bottom: -42vmax;
+      opacity: .75;
+      background: radial-gradient(circle, rgba(135, 97, 239, .14), rgba(135, 97, 239, 0) 68%);
+      animation: drift-two 17s ease-in-out infinite alternate;
     }
 
-    .line-status.slow {
-      color: #9a6a16;
-      background: var(--warning-bg);
-    }
-
-    .line-status.slow .line-status-dot {
-      background: var(--warning);
-    }
-
-    .line-status.offline {
-      color: #c13d50;
-      background: var(--danger-bg);
-    }
-
-    .line-status.offline .line-status-dot {
-      background: var(--danger);
-    }
-
-    .line-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .copy-btn,
-    .enter-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 43px;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      text-decoration: none;
-      border-radius: 10px;
-      transition: 0.22s ease;
-    }
-
-    .copy-btn {
-      width: 45px;
-      flex-shrink: 0;
-      cursor: pointer;
-      color: #687694;
-      border: 1px solid var(--border);
-      background: #fff;
-    }
-
-    .copy-btn:hover {
-      color: var(--primary);
-      border-color: #bdc9ff;
-      background: #f5f7ff;
-    }
-
-    .enter-btn {
-      flex: 1;
-      gap: 8px;
-      color: #fff;
-      border: 1px solid transparent;
-      background: linear-gradient(135deg, var(--primary), #6956df);
-      box-shadow: 0 7px 15px rgba(79, 110, 247, 0.2);
-    }
-
-    .enter-btn:hover {
-      background: linear-gradient(135deg, var(--primary-dark), #5e45d1);
-      box-shadow: 0 10px 20px rgba(79, 110, 247, 0.3);
-      transform: translateY(-1px);
-    }
-
-    .verification-section {
-      margin-top: 48px;
-    }
-
-    .verification-header {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .verification-kicker {
-      display: inline-block;
-    }
-
-    .verification-description {
-      margin: 10px auto 0;
-      color: var(--text-light);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .verification-card {
-      display: block;
-      width: 100%;
-      padding: 0;
-      overflow: hidden;
-      cursor: zoom-in;
-      color: inherit;
-      font: inherit;
-      text-align: left;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.86);
-      box-shadow: var(--shadow-sm);
-      transition: 0.25s ease;
-    }
-
-    .verification-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-md);
-    }
-
-    .verification-image-wrap {
-      position: relative;
-      overflow: hidden;
-      aspect-ratio: 16 / 10;
-      background: #eef2fa;
-    }
-
-    .verification-image {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: top center;
-      transition: transform 0.35s ease;
-    }
-
-    .verification-card:hover .verification-image {
-      transform: scale(1.025);
-    }
-
-    .zoom-tag {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      padding: 7px 10px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
-      background: rgba(24, 34, 64, 0.74);
-    }
-
-    .verification-caption {
-      padding: 15px 17px;
-    }
-
-    .verification-caption strong {
-      display: block;
-      color: #34415f;
-      font-size: 14px;
-    }
-
-    .verification-caption span {
-      display: block;
-      margin-top: 5px;
-      color: var(--text-muted);
-      font-size: 12px;
-    }
-
-    .help-box {
-      display: flex;
-      align-items: flex-start;
-      gap: 13px;
-      padding: 18px 20px;
-      margin: 32px 0 36px;
-      color: var(--text-light);
-      font-size: 13px;
-      line-height: 1.8;
-      border: 1px solid #e3e8f5;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.7);
-    }
-
-    .help-icon {
-      display: grid;
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
-      place-items: center;
-      color: var(--primary);
-      font-size: 14px;
-      font-weight: 800;
-      border-radius: 8px;
-      background: var(--primary-light);
-    }
-
-    .help-box strong {
-      color: #445170;
-    }
-
-    footer {
-      padding-bottom: 30px;
-      color: #9ba5bb;
-      font-size: 12px;
-      text-align: center;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 28px;
+    .orbit {
+      top: 50%;
       left: 50%;
-      z-index: 1000;
-      padding: 11px 17px;
-      color: #fff;
-      font-size: 13px;
-      white-space: nowrap;
-      opacity: 0;
-      border-radius: 10px;
-      pointer-events: none;
-      background: rgba(33, 45, 76, 0.92);
-      box-shadow: 0 10px 28px rgba(24, 34, 64, 0.25);
-      transform: translate(-50%, 18px);
-      transition: 0.25s ease;
+      width: min(72vw, 900px);
+      height: min(72vw, 900px);
+      border: 1px solid rgba(77, 115, 204, .075);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit 30s linear infinite;
     }
 
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
+    .orbit::before,
+    .orbit::after {
+      width: 6px;
+      height: 6px;
+      content: "";
+      border-radius: 50%;
+      background: #4f7cf0;
+      box-shadow: 0 0 0 5px rgba(79, 124, 240, .1), 0 0 17px rgba(79, 124, 240, .42);
     }
 
-    .image-preview-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      visibility: hidden;
-      opacity: 0;
-      background: rgba(14, 20, 38, 0.78);
-      transition: 0.25s ease;
-      backdrop-filter: blur(8px);
+    .orbit::before { top: 14%; left: 10%; }
+    .orbit::after {
+      right: 9%;
+      bottom: 17%;
+      background: #956ee8;
+      box-shadow: 0 0 0 5px rgba(149, 110, 232, .1), 0 0 17px rgba(149, 110, 232, .38);
     }
 
-    .image-preview-modal.show {
-      visibility: visible;
-      opacity: 1;
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(430px, calc(100% - 48px));
+      padding: 28px 8px;
+      text-align: center;
     }
 
-    .image-preview-dialog {
-      display: flex;
-      flex-direction: column;
-      width: min(1100px, 100%);
-      max-height: min(90vh, 900px);
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
-      transform: scale(0.96) translateY(12px);
-      transition: transform 0.25s ease;
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 4vw, 30px);
+      font-weight: 650;
+      line-height: 1.35;
+      letter-spacing: 0;
     }
 
-    .image-preview-modal.show .image-preview-dialog {
-      transform: scale(1) translateY(0);
-    }
-
-    .image-preview-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-shrink: 0;
-      min-height: 58px;
-      padding: 0 16px 0 20px;
-      border-bottom: 1px solid #edf0f6;
-    }
-
-    .image-preview-title {
-      overflow: hidden;
-      color: #26314d;
+    p {
+      margin: 12px 0 0;
+      color: #71809d;
       font-size: 14px;
-      font-weight: 700;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      line-height: 1.75;
     }
 
-    .image-preview-actions {
-      display: flex;
-      gap: 8px;
+    .destination {
+      display: inline;
+      margin-left: 5px;
+      overflow-wrap: break-word;
+      color: #396bdb;
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .preview-open-btn,
-    .preview-close-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      cursor: pointer;
-      color: #5f6d89;
-      font: inherit;
-      font-size: 19px;
-      text-decoration: none;
-      border: 1px solid #e4e9f3;
-      border-radius: 9px;
-      background: #f8faff;
+    .progress {
+      width: 72px;
+      height: 2px;
+      margin: 27px auto 0;
+      overflow: hidden;
+      background: #dfe6f5;
     }
 
-    .preview-open-btn:hover,
-    .preview-close-btn:hover {
-      color: var(--primary);
-      border-color: #bdc9ff;
-      background: #eef2ff;
-    }
-
-    .image-preview-content {
-      display: flex;
-      justify-content: center;
-      overflow: auto;
-      padding: 18px;
-      background: #f4f6fb;
-    }
-
-    .image-preview-content img {
+    .progress::before {
       display: block;
-      width: auto;
-      max-width: 100%;
-      height: auto;
-      border-radius: 6px;
-      box-shadow: 0 8px 24px rgba(30, 42, 76, 0.14);
+      width: 42%;
+      height: 100%;
+      content: "";
+      background: #4776eb;
+      box-shadow: 0 0 9px rgba(71, 118, 235, .5);
+      animation: sweep 1.15s ease-in-out infinite;
     }
 
-    @media (max-width: 720px) {
-      .container {
-        width: min(100% - 24px, 1160px);
-      }
+    @keyframes orbit {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
 
-      .hero {
-        padding: 64px 0 48px;
-      }
+    @keyframes sweep {
+      from { transform: translateX(-120%); }
+      to { transform: translateX(270%); }
+    }
 
-      .line-grid,
-      .verification-grid {
-        grid-template-columns: 1fr;
-      }
+    @keyframes drift-one {
+      to { transform: translate(12vmax, 9vmax) scale(1.05); }
+    }
 
-      .section-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .refresh-btn {
-        width: 100%;
-      }
-
-      .image-preview-modal {
-        padding: 12px;
-      }
+    @keyframes drift-two {
+      to { transform: translate(-9vmax, -9vmax) scale(.93); }
     }
 
     @media (max-width: 500px) {
-      .hero h1 {
-        letter-spacing: -1.5px;
-      }
+      main { width: min(100% - 32px, 430px); }
+      .orbit { width: 118vw; height: 118vw; }
+    }
 
-      .line-card {
-        padding: 20px;
-      }
-
-      .line-top {
-        padding-right: 95px;
-      }
-
-      .recommend-badge {
-        top: 20px;
-        right: -66px;
-        width: 180px;
-        height: 29px;
-        font-size: 10px;
-      }
-
-      .line-details {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .verification-title,
-      .section-title {
-        font-size: 23px;
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
       }
     }
   </style>
 </head>
-
 <body>
-  <main class="container">
-    <section class="hero">
-      <div class="hero-tag">
-        <span>✦</span>
-        GLOBAL INTELLIGENT ROUTING
-      </div>
-
-      <h1>
-        更稳定、更快速的<br />
-        <span class="gradient-text">智能访问体验</span>
-      </h1>
-
-      <p class="hero-description">
-        请根据您的网络所在地选择合适的访问线路。
-        系统将自动检测各节点状态，并推荐延迟更低的可用线路。
-      </p>
-    </section>
-
-    <section>
-      <div class="section-header">
-        <div>
-          <span class="section-kicker">Available Nodes</span>
-          <h2 class="section-title">选择访问线路</h2>
-        </div>
-
-        <button
-          class="refresh-btn"
-          id="refreshBtn"
-          type="button"
-          onclick="checkAllLines()"
-        >
-          <span class="refresh-icon">↻</span>
-          <span>检测线路状态</span>
-        </button>
-      </div>
-
-      <div class="line-grid" id="lineGrid"></div>
-    </section>
-
-    <section class="verification-section">
-      <div class="verification-header">
-        <span class="verification-kicker">Transparent Model Routing</span>
-        <h2 class="verification-title">模型透明验证</h2>
-
-        <p class="verification-description">
-          市场环境复杂，我们始终坚持模型调用真实、透明。不提供未说明的模型替换、混用等服务；以下为近期调用验证记录，供您核验。
-        </p>
-      </div>
-
-      <div class="verification-grid">
-        <button
-          class="verification-card"
-          type="button"
-          aria-label="某维质检报告"
-          onclick="openImagePreview('https://s1.img-e.com/20260719/6a5ca73a1fc98.png', '某维质检报告')"
-        >
-          <div class="verification-image-wrap">
-            <img
-              class="verification-image"
-              src="https://s1.img-e.com/20260719/6a5ca73a1fc98.png"
-              alt="某维质检报告"
-              loading="lazy"
-            />
-            <span class="zoom-tag">点击放大 ⤢</span>
-          </div>
-
-          <div class="verification-caption">
-            <strong>某维质检报告</strong>
-            <span>点击可在页面内放大查看</span>
-          </div>
-        </button>
-
-        <button
-          class="verification-card"
-          type="button"
-          aria-label="某OK质检报告"
-          onclick="openImagePreview('https://s1.img-e.com/20260719/6a5ca454bd25a.png', '某OK质检报告')"
-        >
-          <div class="verification-image-wrap">
-            <img
-              class="verification-image"
-              src="https://s1.img-e.com/20260719/6a5ca454bd25a.png"
-              alt="某OK质检报告"
-              loading="lazy"
-            />
-            <span class="zoom-tag">点击放大 ⤢</span>
-          </div>
-
-          <div class="verification-caption">
-            <strong>某OK质检报告</strong>
-            <span>点击可在页面内放大查看</span>
-          </div>
-        </button>
-      </div>
-    </section>
-
-    <section class="help-box">
-      <div class="help-icon">i</div>
-      <div>
-        <strong>使用说明：</strong>
-        建议优先选择系统推荐或网络延迟较低的线路。若出现页面无法打开、登录异常、响应超时等情况，请切换到其他线路后重试。请妥善保管您的 API Key、令牌及账户信息。
-      </div>
-    </section>
-
-    <footer>
-      © 2025 BitReef API Service · Intelligent Routing Network
-    </footer>
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="orbit" aria-hidden="true"></div>
+  <main aria-live="assertive">
+    <h1 id="title">连接最佳线路</h1>
+    <p id="message">为了确保流畅体验，正在优选出最佳可用节点，请稍候。</p>
+    <div class="progress" aria-hidden="true"></div>
   </main>
-
-  <div
-    class="image-preview-modal"
-    id="imagePreviewModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="imagePreviewTitle"
-    onclick="handleModalOverlayClick(event)"
-  >
-    <div class="image-preview-dialog">
-      <div class="image-preview-header">
-        <div class="image-preview-title" id="imagePreviewTitle">
-          模型检测截图
-        </div>
-
-        <div class="image-preview-actions">
-          <a
-            class="preview-open-btn"
-            id="previewOpenBtn"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="在新窗口打开原图"
-          >
-            ↗
-          </a>
-
-          <button
-            class="preview-close-btn"
-            type="button"
-            onclick="closeImagePreview()"
-            title="关闭"
-          >
-            ×
-          </button>
-        </div>
-      </div>
-
-      <div class="image-preview-content">
-        <img id="imagePreviewImage" src="" alt="放大的模型检测截图" />
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
 
   <script>
     const lines = [
-      {
-        name: "国际线路",
-        desc: "适合全球大多数地区用户",
-        icon: "US",
-        url: "https://ai.bitreef.cc",
-        pingUrl: "https://ai.bitreef.cc/api/status"
-      },
-      {
-        name: "国内线路",
-        desc: "适合中国大陆及周边地区用户",
-        icon: "CN",
-        url: "https://ai.kbai.net",
-        pingUrl: "https://ai.kbai.net/api/status"
-      }
+      { name: "国际线路", url: "https://ai.bitreef.cc", pingUrl: "https://ai.bitreef.cc/api/status" },
+      { name: "国内线路", url: "https://ai.kbai.net", pingUrl: "https://ai.kbai.net/api/status" }
     ];
+    const CHECK_TIMEOUT = 5000;
+    const REDIRECT_DELAY = 2000;
+    const title = document.getElementById("title");
+    const message = document.getElementById("message");
 
-    const lineGrid = document.getElementById("lineGrid");
-    const refreshBtn = document.getElementById("refreshBtn");
-    const toast = document.getElementById("toast");
-
-    const imagePreviewModal = document.getElementById("imagePreviewModal");
-    const imagePreviewImage = document.getElementById("imagePreviewImage");
-    const imagePreviewTitle = document.getElementById("imagePreviewTitle");
-    const previewOpenBtn = document.getElementById("previewOpenBtn");
-
-    let toastTimer;
-    let lastFocusedElement = null;
-    let isChecking = false;
-
-    function escapeHtml(text) {
-      const div = document.createElement("div");
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function renderLines() {
-      lineGrid.innerHTML = lines
-        .map(
-          (line, index) => `
-            <article class="line-card" id="card-${index}">
-              <div class="recommend-badge">✦ 推荐线路</div>
-
-              <div class="line-top">
-                <div class="flag-icon">${escapeHtml(line.icon)}</div>
-
-                <div>
-                  <h3 class="line-name">${escapeHtml(line.name)}</h3>
-                  <p class="line-description">${escapeHtml(line.desc)}</p>
-                </div>
-              </div>
-
-              <div class="line-details">
-                <div class="latency">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                    <path d="M8.5 16.11a6 6 0 0 1 7 0"></path>
-                    <path d="M12 20h.01"></path>
-                  </svg>
-
-                  <span>网络延迟</span>
-                  <span class="latency-value" id="latency-${index}">检测中</span>
-                </div>
-
-                <div class="line-status" id="status-${index}">
-                  <span class="line-status-dot"></span>
-                  <span>检测中</span>
-                </div>
-              </div>
-
-              <div class="line-actions">
-                <button
-                  class="copy-btn"
-                  type="button"
-                  title="复制线路地址"
-                  onclick="copyText(${index})"
-                >
-                  ⧉
-                </button>
-
-                <a
-                  class="enter-btn"
-                  href="${escapeHtml(line.url)}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  进入站点
-                  <span>→</span>
-                </a>
-              </div>
-            </article>
-          `
-        )
-        .join("");
-    }
-
-    function setLineStatus(index, type, label, latency = null) {
-      const statusElement = document.getElementById(`status-${index}`);
-      const latencyElement = document.getElementById(`latency-${index}`);
-
-      statusElement.className = `line-status ${type}`;
-      statusElement.innerHTML = `
-        <span class="line-status-dot"></span>
-        <span>${label}</span>
-      `;
-
-      if (latency !== null) {
-        latencyElement.textContent = `${latency} ms`;
-      } else if (type === "offline") {
-        latencyElement.textContent = "不可用";
-      } else {
-        latencyElement.textContent = "检测中";
-      }
-    }
-
-    function checkLine(line, index) {
+    function checkLine(line) {
       return new Promise((resolve) => {
-        const startTime = performance.now();
         const image = new Image();
-        let completed = false;
-
-        function finish(available, latency) {
-          if (completed) return;
-          completed = true;
-
+        const startedAt = performance.now();
+        let finished = false;
+        const finish = (available) => {
+          if (finished) return;
+          finished = true;
           clearTimeout(timeout);
-
-          if (!available) {
-            setLineStatus(index, "offline", "暂不可用");
-
-            resolve({
-              index,
-              available: false,
-              latency: Infinity
-            });
-
-            return;
-          }
-
-          const isFast = latency <= 500;
-
-          setLineStatus(
-            index,
-            isFast ? "online" : "slow",
-            isFast ? "连接正常" : "连接较慢",
-            latency
-          );
-
-          resolve({
-            index,
-            available: true,
-            latency
-          });
-        }
-
-        const timeout = setTimeout(() => {
-          image.onload = null;
-          image.onerror = null;
-          finish(false, Infinity);
-        }, 5000);
-
-        /*
-          /api/status 返回 JSON，不是图片，因此通常触发 onerror。
-
-          此页面的检测目的不是验证图片格式，而是判断该 URL 是否能在
-          5 秒内获得响应。因此 onload 和 onerror 都视为线路可达。
-
-          注意：
-          该方案仅用于“网络可达性/响应时间”检测，无法严格判断 HTTP
-          状态码是否为 200，也无法校验 API 返回的 JSON 内容。
-        */
-        function completeCheck(eventType) {
-          const latency = Math.round(performance.now() - startTime);
-
-          console.debug(
-            `[线路检测] ${line.name}：${eventType}，耗时 ${latency} ms`
-          );
-
-          finish(true, latency);
-        }
-
-        image.onload = () => completeCheck("load");
-        image.onerror = () => completeCheck("error");
-
-        const separator = line.pingUrl.includes("?") ? "&" : "?";
-
-        // 添加时间戳，避免浏览器缓存影响检测结果。
-        image.src = `${line.pingUrl}${separator}_t=${Date.now()}`;
+          resolve({ line, available, latency: performance.now() - startedAt });
+        };
+        const timeout = setTimeout(() => finish(false), CHECK_TIMEOUT);
+        image.onload = () => finish(true);
+        image.onerror = () => finish(true);
+        image.src = `${line.pingUrl}${line.pingUrl.includes("?") ? "&" : "?"}_=${Date.now()}`;
       });
     }
 
-    async function checkAllLines() {
-      if (isChecking) return;
-
-      isChecking = true;
-      refreshBtn.disabled = true;
-      refreshBtn.classList.add("loading");
-      refreshBtn.querySelector("span:last-child").textContent = "正在检测...";
-
-      document.querySelectorAll(".line-card").forEach((card) => {
-        card.classList.remove("recommended");
-      });
-
-      lines.forEach((line, index) => {
-        setLineStatus(index, "", "检测中");
-      });
-
-      const results = await Promise.all(
-        lines.map((line, index) => checkLine(line, index))
-      );
-
-      const availableLines = results
-        .filter((item) => item.available)
-        .sort((a, b) => a.latency - b.latency);
-
-      if (availableLines.length > 0) {
-        const bestLine = availableLines[0];
-
-        document
-          .getElementById(`card-${bestLine.index}`)
-          .classList.add("recommended");
-
-        showToast("检测完成，已为您推荐最优访问线路");
-      } else {
-        showToast("暂未检测到可用线路，请稍后重试");
-      }
-
-      refreshBtn.disabled = false;
-      refreshBtn.classList.remove("loading");
-      refreshBtn.querySelector("span:last-child").textContent =
-        "重新检测线路";
-
-      isChecking = false;
+    function showRedirect(selected) {
+      title.textContent = "即将为您跳转";
+      message.innerHTML = `正在跳转至${selected.name}<span class="destination">${selected.url}</span>`;
+      window.setTimeout(() => window.location.replace(selected.url), REDIRECT_DELAY);
     }
 
-    async function copyText(index) {
-      const text = lines[index].url;
-
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast("线路地址已复制到剪贴板");
-      } catch (error) {
-        const textarea = document.createElement("textarea");
-
-        textarea.value = text;
-        textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
-
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        textarea.remove();
-
-        showToast("线路地址已复制到剪贴板");
-      }
+    async function redirect() {
+      const results = await Promise.all(lines.map(checkLine));
+      const available = results.filter((result) => result.available);
+      const selected = (available.length ? available : results)
+        .sort((a, b) => a.latency - b.latency)[0].line;
+      showRedirect(selected);
     }
 
-    function showToast(message) {
-      clearTimeout(toastTimer);
-
-      toast.textContent = message;
-      toast.classList.add("show");
-
-      toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2500);
-    }
-
-    function openImagePreview(imageUrl, title) {
-      lastFocusedElement = document.activeElement;
-
-      imagePreviewImage.src = imageUrl;
-      imagePreviewImage.alt = title;
-      imagePreviewTitle.textContent = title;
-      previewOpenBtn.href = imageUrl;
-
-      imagePreviewModal.classList.add("show");
-      document.body.classList.add("modal-open");
-
-      setTimeout(() => {
-        document.querySelector(".preview-close-btn").focus();
-      }, 50);
-    }
-
-    function closeImagePreview() {
-      imagePreviewModal.classList.remove("show");
-      document.body.classList.remove("modal-open");
-
-      imagePreviewImage.src = "";
-      previewOpenBtn.href = "#";
-
-      if (lastFocusedElement) {
-        lastFocusedElement.focus();
-      }
-    }
-
-    function handleModalOverlayClick(event) {
-      if (event.target === imagePreviewModal) {
-        closeImagePreview();
-      }
-    }
-
-    document.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Escape" &&
-        imagePreviewModal.classList.contains("show")
-      ) {
-        closeImagePreview();
-      }
-    });
-
-    renderLines();
-    checkAllLines();
+    redirect().catch(() => showRedirect(lines[0]));
   </script>
 </body>
 </html>
