@@ -3,8 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>BitReef | 正在跳转</title>
+  <meta name="theme-color" content="#fbfcff">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="description" content="BitReef API中转站 聚合 AI 大模型服务平台，提供统一的 API 接入与智能线路导航，自动选择更优可用节点，为开发者带来稳定流畅的模型调用体验。">
+  <meta name="keywords" content="BitReef, API中转站, 聚合AI, AI大模型, 大模型API, AI API, OpenAI兼容API, 模型聚合, 智能线路导航">
+  <meta name="author" content="BitReef">
+  <link rel="icon" href="https://s1.img-e.com/20260717/6a5a16a493c7f.png" type="image/png">
+  <link rel="alternate" hreflang="zh-CN" href="./">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BitReef">
+  <meta property="og:title" content="BitReef API中转站｜聚合 AI 大模型服务">
+  <meta property="og:description" content="统一接入聚合 AI 大模型服务，自动检测可用节点并选择更优访问线路。">
+  <meta property="og:image" content="https://s1.img-e.com/20260717/6a5a16a493c7f.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="BitReef API中转站｜聚合 AI 大模型服务">
+  <meta name="twitter:description" content="统一接入聚合 AI 大模型服务，自动检测可用节点并选择更优访问线路。">
+  <meta name="twitter:image" content="https://s1.img-e.com/20260717/6a5a16a493c7f.png">
+  <title>BitReef API中转站｜聚合 AI 大模型服务</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "BitReef API中转站",
+      "inLanguage": "zh-CN",
+      "description": "BitReef API中转站 聚合 AI 大模型服务平台，提供统一 API 接入与智能线路导航。",
+      "publisher": {
+        "@type": "Organization",
+        "name": "BitReef",
+        "logo": "https://s1.img-e.com/20260717/6a5a16a493c7f.png"
+      }
+    }
+  </script>
   <style>
     :root { color-scheme: light; }
     * { box-sizing: border-box; }
@@ -26,145 +56,54 @@
     .ambient::after,
     .orbit,
     .orbit::before,
-    .orbit::after {
-      position: fixed;
-      pointer-events: none;
-    }
+    .orbit::after { position: fixed; pointer-events: none; }
 
     .ambient { inset: 0; overflow: hidden; }
-
     .ambient::before,
-    .ambient::after {
-      width: 58vmax;
-      height: 58vmax;
-      content: "";
-      border-radius: 50%;
-      filter: blur(28px);
-    }
-
+    .ambient::after { width: 58vmax; height: 58vmax; content: ""; border-radius: 50%; filter: blur(28px); }
     .ambient::before {
-      top: -38vmax;
-      left: -21vmax;
-      opacity: .8;
+      top: -38vmax; left: -21vmax; opacity: .8;
       background: radial-gradient(circle, rgba(85, 142, 255, .18), rgba(85, 142, 255, 0) 67%);
       animation: drift-one 14s ease-in-out infinite alternate;
     }
-
     .ambient::after {
-      right: -25vmax;
-      bottom: -42vmax;
-      opacity: .75;
+      right: -25vmax; bottom: -42vmax; opacity: .75;
       background: radial-gradient(circle, rgba(135, 97, 239, .14), rgba(135, 97, 239, 0) 68%);
       animation: drift-two 17s ease-in-out infinite alternate;
     }
 
     .orbit {
-      top: 50%;
-      left: 50%;
-      width: min(72vw, 900px);
-      height: min(72vw, 900px);
-      border: 1px solid rgba(77, 115, 204, .075);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit 30s linear infinite;
+      top: 50%; left: 50%; width: min(72vw, 900px); height: min(72vw, 900px);
+      border: 1px solid rgba(77, 115, 204, .075); border-radius: 50%;
+      transform: translate(-50%, -50%); animation: orbit 30s linear infinite;
     }
-
     .orbit::before,
     .orbit::after {
-      width: 6px;
-      height: 6px;
-      content: "";
-      border-radius: 50%;
-      background: #4f7cf0;
+      width: 6px; height: 6px; content: ""; border-radius: 50%; background: #4f7cf0;
       box-shadow: 0 0 0 5px rgba(79, 124, 240, .1), 0 0 17px rgba(79, 124, 240, .42);
     }
-
     .orbit::before { top: 14%; left: 10%; }
     .orbit::after {
-      right: 9%;
-      bottom: 17%;
-      background: #956ee8;
+      right: 9%; bottom: 17%; background: #956ee8;
       box-shadow: 0 0 0 5px rgba(149, 110, 232, .1), 0 0 17px rgba(149, 110, 232, .38);
     }
 
-    main {
-      position: relative;
-      z-index: 1;
-      width: min(430px, calc(100% - 48px));
-      padding: 28px 8px;
-      text-align: center;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(25px, 4vw, 30px);
-      font-weight: 650;
-      line-height: 1.35;
-      letter-spacing: 0;
-    }
-
-    p {
-      margin: 12px 0 0;
-      color: #71809d;
-      font-size: 14px;
-      line-height: 1.75;
-    }
-
-    .destination {
-      display: inline;
-      margin-left: 5px;
-      overflow-wrap: break-word;
-      color: #396bdb;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .progress {
-      width: 72px;
-      height: 2px;
-      margin: 27px auto 0;
-      overflow: hidden;
-      background: #dfe6f5;
-    }
-
+    main { position: relative; z-index: 1; width: min(430px, calc(100% - 48px)); padding: 28px 8px; text-align: center; }
+    h1 { margin: 0; font-size: clamp(25px, 4vw, 30px); font-weight: 650; line-height: 1.35; }
+    p { margin: 12px 0 0; color: #71809d; font-size: 14px; line-height: 1.75; }
+    .destination { display: inline; margin-left: 5px; overflow-wrap: break-word; color: #396bdb; font-size: 13px; font-weight: 600; }
+    .progress { width: 72px; height: 2px; margin: 27px auto 0; overflow: hidden; background: #dfe6f5; }
     .progress::before {
-      display: block;
-      width: 42%;
-      height: 100%;
-      content: "";
-      background: #4776eb;
-      box-shadow: 0 0 9px rgba(71, 118, 235, .5);
-      animation: sweep 1.15s ease-in-out infinite;
+      display: block; width: 42%; height: 100%; content: ""; background: #4776eb;
+      box-shadow: 0 0 9px rgba(71, 118, 235, .5); animation: sweep 1.15s ease-in-out infinite;
     }
 
-    @keyframes orbit {
-      to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    @keyframes sweep {
-      from { transform: translateX(-120%); }
-      to { transform: translateX(270%); }
-    }
-
-    @keyframes drift-one {
-      to { transform: translate(12vmax, 9vmax) scale(1.05); }
-    }
-
-    @keyframes drift-two {
-      to { transform: translate(-9vmax, -9vmax) scale(.93); }
-    }
-
-    @media (max-width: 500px) {
-      main { width: min(100% - 32px, 430px); }
-      .orbit { width: 118vw; height: 118vw; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-      }
-    }
+    @keyframes orbit { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    @keyframes sweep { from { transform: translateX(-120%); } to { transform: translateX(270%); } }
+    @keyframes drift-one { to { transform: translate(12vmax, 9vmax) scale(1.05); } }
+    @keyframes drift-two { to { transform: translate(-9vmax, -9vmax) scale(.93); } }
+    @media (max-width: 500px) { main { width: min(100% - 32px, 430px); } .orbit { width: 118vw; height: 118vw; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
   </style>
 </head>
 <body>
@@ -172,8 +111,11 @@
   <div class="orbit" aria-hidden="true"></div>
   <main aria-live="assertive">
     <h1 id="title">连接最佳线路</h1>
-    <p id="message">为了确保流畅体验，正在为您优选最佳可用节点，请稍候</p>
+    <p id="message">为了确保流畅体验，正在为您优选可用节点，请稍候</p>
     <div class="progress" aria-hidden="true"></div>
+    <noscript>
+      <p>BitReef API 智能线路导航需要启用 JavaScript 才能自动选择访问线路。您也可以访问 <a href="https://ai.bitreef.cc">主线路</a> 或 <a href="https://ai.kbai.net">备用线路</a>。</p>
+    </noscript>
   </main>
 
   <script>
@@ -222,3 +164,4 @@
   </script>
 </body>
 </html>
+
