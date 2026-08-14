@@ -3,40 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fbfcff">
+  <meta name="theme-color" content="#070a12">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="description" content="BitReef API中转站 聚合 AI 大模型服务平台，提供统一的 API 接入与智能线路导航，自动选择更优可用节点，为开发者带来稳定流畅的模型调用体验。">
-  <meta name="keywords" content="BitReef, API中转站, 聚合AI, AI大模型, 大模型API, AI API, OpenAI兼容API, 模型聚合, 智能线路导航">
-  <meta name="author" content="BitReef">
+  <meta name="description" content="BitReef API（比特礁API）聚合全球顶尖 AI 模型，一个 Key 即可接入多种模型，覆盖 OpenAI、Claude、Gemini 等主流模型；兼容 OpenAI API，提供统一调用、稳定路由与实时用量查询。">
+  <meta name="keywords" content="BitReef API, 比特礁API, API中转站, 模型中转站, 聚合AI模型, AI大模型API, OpenAI API兼容, Claude 中转站, Gemini 中转站, ChatGPT 中转站, 模型聚合, 统一API调用, 低价模型, 满血不掺水, Codex API, GPT 正版">
+  <meta name="author" content="BitReef API">
   <link rel="icon" href="https://s1.img-e.com/20260717/6a5a16a493c7f.png" type="image/png">
-  <link rel="alternate" hreflang="zh-CN" href="./">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="BitReef">
-  <meta property="og:title" content="BitReef API中转站｜聚合 AI 大模型服务">
-  <meta property="og:description" content="统一接入聚合 AI 大模型服务，自动检测可用节点并选择更优访问线路。">
+  <meta property="og:site_name" content="BitReef API">
+  <meta property="og:title" content="BitReef API（比特礁API）｜聚合全球顶尖 AI 模型">
+  <meta property="og:description" content="一个 Key 接入多种 AI 模型，兼容 OpenAI API，支持统一调用、稳定路由与实时用量查询。">
   <meta property="og:image" content="https://s1.img-e.com/20260717/6a5a16a493c7f.png">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="BitReef API中转站｜聚合 AI 大模型服务">
-  <meta name="twitter:description" content="统一接入聚合 AI 大模型服务，自动检测可用节点并选择更优访问线路。">
+  <meta name="twitter:title" content="BitReef API（比特礁API）｜聚合全球顶尖 AI 模型">
+  <meta name="twitter:description" content="一个 Key 接入多种 AI 模型，兼容 OpenAI API，支持统一调用、稳定路由与实时用量查询。">
   <meta name="twitter:image" content="https://s1.img-e.com/20260717/6a5a16a493c7f.png">
-  <title>BitReef API中转站｜聚合 AI 大模型服务</title>
+  <title>BitReef API（比特礁API）｜聚合全球顶尖 AI 模型</title>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "BitReef API中转站",
+      "@type": "SoftwareApplication",
+      "name": "BitReef API",
+      "alternateName": "比特礁API",
       "inLanguage": "zh-CN",
-      "description": "BitReef API中转站 聚合 AI 大模型服务平台，提供统一 API 接入与智能线路导航。",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "description": "BitReef API（比特礁API）聚合全球顶尖 AI 模型，一个 Key 可接入多种模型，兼容 OpenAI API，支持统一调用、稳定路由与实时用量查询。",
       "publisher": {
         "@type": "Organization",
-        "name": "BitReef",
+        "name": "BitReef API",
         "logo": "https://s1.img-e.com/20260717/6a5a16a493c7f.png"
       }
     }
   </script>
   <style>
-    :root { color-scheme: light; }
+    :root {
+      color-scheme: light;
+      --ink: #17243e;
+      --muted: #6d7c99;
+      --blue: #365fb9;
+      --line: rgba(82, 113, 172, .25);
+    }
+
     * { box-sizing: border-box; }
 
     body {
@@ -46,75 +55,211 @@
       margin: 0;
       overflow: hidden;
       place-items: center;
-      color: #182542;
+      color: var(--ink);
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
-      background: #fbfcff;
+      background: #f7f9ff;
     }
 
-    .ambient,
-    .ambient::before,
-    .ambient::after,
-    .orbit,
-    .orbit::before,
-    .orbit::after { position: fixed; pointer-events: none; }
+    .cinema,
+    .cinema::before,
+    .cinema::after,
+    .mist,
+    .arc,
+    .arc::before,
+    .arc::after { position: fixed; pointer-events: none; }
 
-    .ambient { inset: 0; overflow: hidden; }
-    .ambient::before,
-    .ambient::after { width: 58vmax; height: 58vmax; content: ""; border-radius: 50%; filter: blur(28px); }
-    .ambient::before {
-      top: -38vmax; left: -21vmax; opacity: .8;
-      background: radial-gradient(circle, rgba(85, 142, 255, .18), rgba(85, 142, 255, 0) 67%);
-      animation: drift-one 14s ease-in-out infinite alternate;
-    }
-    .ambient::after {
-      right: -25vmax; bottom: -42vmax; opacity: .75;
-      background: radial-gradient(circle, rgba(135, 97, 239, .14), rgba(135, 97, 239, 0) 68%);
-      animation: drift-two 17s ease-in-out infinite alternate;
+    .cinema {
+      inset: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 55% 64% at 50% 48%, rgba(144, 175, 237, .24) 0%, rgba(240, 245, 255, .2) 47%, transparent 72%),
+        linear-gradient(125deg, #fbfcff 0%, #f3f6fc 46%, #f9fbff 100%);
     }
 
-    .orbit {
-      top: 50%; left: 50%; width: min(72vw, 900px); height: min(72vw, 900px);
-      border: 1px solid rgba(77, 115, 204, .075); border-radius: 50%;
-      transform: translate(-50%, -50%); animation: orbit 30s linear infinite;
-    }
-    .orbit::before,
-    .orbit::after {
-      width: 6px; height: 6px; content: ""; border-radius: 50%; background: #4f7cf0;
-      box-shadow: 0 0 0 5px rgba(79, 124, 240, .1), 0 0 17px rgba(79, 124, 240, .42);
-    }
-    .orbit::before { top: 14%; left: 10%; }
-    .orbit::after {
-      right: 9%; bottom: 17%; background: #956ee8;
-      box-shadow: 0 0 0 5px rgba(149, 110, 232, .1), 0 0 17px rgba(149, 110, 232, .38);
+    .cinema::before {
+      inset: -30%;
+      content: "";
+      opacity: .6;
+      background: linear-gradient(112deg, transparent 44%, rgba(74, 126, 230, .1) 49%, transparent 56%);
+      transform: rotate(-13deg);
+      animation: beam 12s ease-in-out infinite alternate;
     }
 
-    main { position: relative; z-index: 1; width: min(430px, calc(100% - 48px)); padding: 28px 8px; text-align: center; }
-    h1 { margin: 0; font-size: clamp(25px, 4vw, 30px); font-weight: 650; line-height: 1.35; }
-    p { margin: 12px 0 0; color: #71809d; font-size: 14px; line-height: 1.75; }
-    .destination { display: inline; margin-left: 5px; overflow-wrap: break-word; color: #396bdb; font-size: 13px; font-weight: 600; }
-    .progress { width: 72px; height: 2px; margin: 27px auto 0; overflow: hidden; background: #dfe6f5; }
+    .cinema::after {
+      inset: 0;
+      content: "";
+      opacity: .17;
+      background-image: radial-gradient(rgba(50, 77, 132, .64) .5px, transparent .7px);
+      background-size: 4px 4px;
+      mix-blend-mode: soft-light;
+    }
+
+    .mist {
+      width: 56vmax;
+      height: 38vmax;
+      border-radius: 50%;
+      filter: blur(58px);
+      opacity: .38;
+    }
+
+    .mist-one {
+      top: -20vmax;
+      left: -24vmax;
+      background: #80a7ed;
+      animation: float-one 18s ease-in-out infinite alternate;
+    }
+
+    .mist-two {
+      right: -26vmax;
+      bottom: -23vmax;
+      background: #af97eb;
+      animation: float-two 21s ease-in-out infinite alternate;
+    }
+
+    .arc {
+      top: 50%;
+      left: 50%;
+      width: min(1120px, 110vw);
+      height: min(1120px, 110vw);
+      border: 1px solid rgba(75, 110, 182, .13);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit 38s linear infinite;
+    }
+
+    .arc::before,
+    .arc::after {
+      width: 5px;
+      height: 5px;
+      content: "";
+      border-radius: 50%;
+      background: #4777da;
+      box-shadow: 0 0 0 5px rgba(71, 119, 218, .1), 0 0 26px 4px rgba(71, 119, 218, .35);
+    }
+
+    .arc::before { top: 16%; left: 9%; }
+    .arc::after {
+      right: 11%;
+      bottom: 15%;
+      background: #8c6ed5;
+      box-shadow: 0 0 0 5px rgba(140, 110, 213, .08), 0 0 26px 4px rgba(140, 110, 213, .3);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(760px, calc(100% - 48px));
+      padding: 52px 12px;
+      text-align: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 26px;
+      color: #6178aa;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.2px;
+    }
+
+    .kicker::before,
+    .kicker::after {
+      width: 24px;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, transparent, rgba(87, 119, 187, .55));
+    }
+
+    .kicker::after { transform: rotate(180deg); }
+
+    h1 {
+      max-width: 680px;
+      margin: 0 auto;
+      color: transparent;
+      font-size: clamp(34px, 5vw, 58px);
+      font-weight: 620;
+      line-height: 1.2;
+      letter-spacing: .025em;
+      text-wrap: balance;
+      background: linear-gradient(110deg, #172846 12%, #263f70 50%, #486399 92%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      text-shadow: 0 12px 35px rgba(83, 115, 176, .12);
+    }
+
+    .message {
+      max-width: 580px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .destination {
+      display: inline;
+      margin-left: 7px;
+      overflow-wrap: break-word;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .progress {
+      position: relative;
+      width: min(150px, 44vw);
+      height: 1px;
+      margin: 37px auto 0;
+      overflow: hidden;
+      background: var(--line);
+    }
+
     .progress::before {
-      display: block; width: 42%; height: 100%; content: ""; background: #4776eb;
-      box-shadow: 0 0 9px rgba(71, 118, 235, .5); animation: sweep 1.15s ease-in-out infinite;
+      display: block;
+      width: 38%;
+      height: 100%;
+      content: "";
+      background: #4776da;
+      box-shadow: 0 0 15px 3px rgba(79, 119, 210, .5);
+      animation: sweep 1.5s cubic-bezier(.5, 0, .4, 1) infinite;
     }
 
     @keyframes orbit { to { transform: translate(-50%, -50%) rotate(360deg); } }
-    @keyframes sweep { from { transform: translateX(-120%); } to { transform: translateX(270%); } }
-    @keyframes drift-one { to { transform: translate(12vmax, 9vmax) scale(1.05); } }
-    @keyframes drift-two { to { transform: translate(-9vmax, -9vmax) scale(.93); } }
-    @media (max-width: 500px) { main { width: min(100% - 32px, 430px); } .orbit { width: 118vw; height: 118vw; } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+    @keyframes sweep { from { transform: translateX(-130%); } to { transform: translateX(300%); } }
+    @keyframes beam { to { transform: rotate(-13deg) translate(15%, 5%); } }
+    @keyframes float-one { to { transform: translate(15vmax, 11vmax) scale(1.12); } }
+    @keyframes float-two { to { transform: translate(-13vmax, -9vmax) scale(.9); } }
+
+    @media (max-width: 560px) {
+      main { width: min(100% - 34px, 760px); padding: 36px 0; }
+      .kicker { margin-bottom: 22px; letter-spacing: 1.8px; }
+      h1 { font-size: 34px; }
+      .message { margin-top: 18px; font-size: 14px; }
+      .arc { width: 142vw; height: 142vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="ambient" aria-hidden="true"></div>
-  <div class="orbit" aria-hidden="true"></div>
+  <div class="cinema" aria-hidden="true">
+    <div class="mist mist-one"></div>
+    <div class="mist mist-two"></div>
+  </div>
+  <div class="arc" aria-hidden="true"></div>
   <main aria-live="assertive">
-    <h1 id="title">连接最佳线路</h1>
-    <p id="message">为了确保流畅体验，正在为您优选可用节点，请稍候</p>
+    <p class="kicker">BITREEF API</p>
+    <h1 id="title">正在连接最佳线路</h1>
+    <p class="message" id="message">为了确保流畅体验，正在为您优选可用节点，请稍候。</p>
     <div class="progress" aria-hidden="true"></div>
     <noscript>
-      <p>BitReef API 智能线路导航需要启用 JavaScript 才能自动选择访问线路。您也可以访问 <a href="https://ai.bitreef.cc">主线路</a> 或 <a href="https://ai.kbai.net">备用线路</a>。</p>
+      <p class="message">BitReef API（比特礁API）需要启用 JavaScript 才能自动选择访问线路。您也可以访问 <a href="https://ai.bitreef.cc">主线路</a> 或 <a href="https://ai.kbai.net">备用线路</a>。</p>
     </noscript>
   </main>
 
@@ -164,4 +309,3 @@
   </script>
 </body>
 </html>
-
